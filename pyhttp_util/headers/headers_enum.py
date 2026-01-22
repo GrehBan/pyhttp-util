@@ -1,18 +1,19 @@
 """Enumeration of standard HTTP headers."""
 
-from enum import StrEnum
+from enum import Enum
+
 from multidict import istr
 
 __all__ = ("HTTPHeader",)
 
 
-class HTTPHeader(StrEnum):
+class HTTPHeader(str, Enum):
     """Comprehensive HTTP headers enumeration.
-    
+
     This enumeration contains standard HTTP headers defined in RFCs.
     The values are wrapped in `multidict.istr` for case-insensitive comparison.
     """
-    
+
     AUTHORIZATION = istr("Authorization")
     PROXY_AUTHORIZATION = istr("Proxy-Authorization")
     WWW_AUTHENTICATE = istr("WWW-Authenticate")
@@ -24,7 +25,7 @@ class HTTPHeader(StrEnum):
     EXPIRES = istr("Expires")
     PRAGMA = istr("Pragma")
     WARNING = istr("Warning")
-    
+
     ACCEPT_CH = istr("Accept-CH")
     ACCEPT_CH_LIFETIME = istr("Accept-CH-Lifetime")
     SEC_CH_UA = istr("Sec-CH-UA")
@@ -52,10 +53,10 @@ class HTTPHeader(StrEnum):
     TE = istr("TE")
     TRAILER = istr("Trailer")
     UPGRADE = istr("Upgrade")
-    
+
     COOKIE = istr("Cookie")
     SET_COOKIE = istr("Set-Cookie")
-    
+
     ACCEPT = istr("Accept")
     ACCEPT_CHARSET = istr("Accept-Charset")
     ACCEPT_ENCODING = istr("Accept-Encoding")
@@ -87,7 +88,7 @@ class HTTPHeader(StrEnum):
 
     LOCATION = istr("Location")
     REFRESH = istr("Refresh")
-    
+
     FROM = istr("From")
     HOST = istr("Host")
     REFERER = istr("Referer")
@@ -98,7 +99,9 @@ class HTTPHeader(StrEnum):
     SERVER = istr("Server")
 
     CONTENT_SECURITY_POLICY = istr("Content-Security-Policy")
-    CONTENT_SECURITY_POLICY_REPORT_ONLY = istr("Content-Security-Policy-Report-Only")
+    CONTENT_SECURITY_POLICY_REPORT_ONLY = istr(
+        "Content-Security-Policy-Report-Only"
+    )
     CROSS_ORIGIN_EMBEDDER_POLICY = istr("Cross-Origin-Embedder-Policy")
     CROSS_ORIGIN_OPENER_POLICY = istr("Cross-Origin-Opener-Policy")
     CROSS_ORIGIN_RESOURCE_POLICY = istr("Cross-Origin-Resource-Policy")
@@ -110,7 +113,9 @@ class HTTPHeader(StrEnum):
     X_CONTENT_TYPE_OPTIONS = istr("X-Content-Type-Options")
     X_DOWNLOAD_OPTIONS = istr("X-Download-Options")
     X_FRAME_OPTIONS = istr("X-Frame-Options")
-    X_PERMITTED_CROSS_DOMAIN_POLICIES = istr("X-Permitted-Cross-Domain-Policies")
+    X_PERMITTED_CROSS_DOMAIN_POLICIES = istr(
+        "X-Permitted-Cross-Domain-Policies"
+    )
     X_POWERED_BY = istr("X-Powered-By")
     X_XSS_PROTECTION = istr("X-XSS-Protection")
 
@@ -137,7 +142,7 @@ class HTTPHeader(StrEnum):
     SEC_WEBSOCKET_KEY = istr("Sec-WebSocket-Key")
     SEC_WEBSOCKET_PROTOCOL = istr("Sec-WebSocket-Protocol")
     SEC_WEBSOCKET_VERSION = istr("Sec-WebSocket-Version")
-    
+
     ACCEPT_PATCH = istr("Accept-Patch")
     ACCEPT_POST = istr("Accept-Post")
     ACCEPT_PUSH_POLICY = istr("Accept-Push-Policy")
@@ -154,7 +159,9 @@ class HTTPHeader(StrEnum):
     SEC_FETCH_MODE = istr("Sec-Fetch-Mode")
     SEC_FETCH_SITE = istr("Sec-Fetch-Site")
     SEC_FETCH_USER = istr("Sec-Fetch-User")
-    SERVICE_WORKER_NAVIGATION_PRELOAD = istr("Service-Worker-Navigation-Preload")
+    SERVICE_WORKER_NAVIGATION_PRELOAD = istr(
+        "Service-Worker-Navigation-Preload"
+    )
     SIGNATURE = istr("Signature")
     SIGNED_HEADERS = istr("Signed-Headers")
     SOURCEMAP = istr("SourceMap")

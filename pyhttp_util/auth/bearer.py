@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
-from pyhttp_util.headers.headers import HeaderType, Header
+from pyhttp_util.headers.headers import Header, HeaderType
 
 
 @dataclass(frozen=True, slots=True)
 class BearerAuth:
     token: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if not self.token:
             raise ValueError("Token cannot be empty")
         if any(char.isspace() for char in self.token):
@@ -32,19 +32,23 @@ class BearerAuth:
             auth_str = header
 
         if not auth_str:
-             raise ValueError("Empty authorization header")
+            raise ValueError("Empty authorization header")
 
         try:
             auth_type, token = auth_str.split(" ", 1)
         except ValueError:
-             raise ValueError(f"Invalid authorization header format: '{auth_str}'")
+            raise ValueError(
+                f"Invalid authorization header format: '{auth_str}'"
+            )
 
         if auth_type.lower() != "bearer":
-            raise ValueError(f"Authentication type must be Bearer, got: '{auth_type}'")
+            raise ValueError(
+                f"Authentication type must be Bearer, got: '{auth_type}'"
+            )
 
         token = token.strip()
         if not token:
-             raise ValueError("Empty token in authorization header")
+            raise ValueError("Empty token in authorization header")
 
         return cls(token=token)
 

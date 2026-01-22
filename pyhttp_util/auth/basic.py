@@ -1,26 +1,35 @@
+"HTTP Basic Authentication utilities."
+
+from __future__ import annotations
+
 import base64
 import binascii
 from dataclasses import dataclass
 
 from pyhttp_util.headers.headers import Header, HeaderType
 
+__all__ = ("BasicAuth",)
+
 DEFAULT_ENCODING = "latin1"
 
 
 @dataclass(frozen=True, slots=True)
 class BasicAuth:
+    """HTTP Basic Authentication credentials."""
+
     login: str
     password: str
     encoding: str = DEFAULT_ENCODING
 
     def __post_init__(self) -> None:
+        """Validates that login does not contain a colon."""
         if ":" in self.login:
             raise ValueError("User ID cannot contain a colon")
 
     @classmethod
     def decode(
         cls, header: HeaderType, encoding: str = DEFAULT_ENCODING
-    ) -> "BasicAuth":
+    ) -> BasicAuth:
         """Create a BasicAuth object from an Authorization HTTP header.
 
         Args:
@@ -46,7 +55,7 @@ class BasicAuth:
         except ValueError:
             raise ValueError(
                 f"Invalid authorization header format: '{auth_str}'"
-            )
+            ) from None
 
         if auth_type.lower() != "basic":
             raise ValueError(
@@ -57,7 +66,7 @@ class BasicAuth:
             decoded_bytes = base64.b64decode(credentials.strip())
             decoded_str = decoded_bytes.decode(encoding)
         except (binascii.Error, UnicodeDecodeError) as e:
-            raise ValueError(f"Invalid credentials encoding: {e}")
+            raise ValueError(f"Invalid credentials encoding: {e}") from e
 
         if ":" not in decoded_str:
             raise ValueError(
@@ -78,4 +87,5 @@ class BasicAuth:
         return f"Basic {encoded_bytes.decode(self.encoding)}"
 
     def __str__(self) -> str:
+        """Returns the encoded Authorization header value."""
         return self.encode()

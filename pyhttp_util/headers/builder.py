@@ -1,5 +1,7 @@
 """Helper class for building headers."""
 
+from __future__ import annotations
+
 from pyhttp_util.headers.headers import Header
 from pyhttp_util.headers.headers_enum import HTTPHeader
 

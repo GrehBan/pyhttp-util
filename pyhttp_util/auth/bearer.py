@@ -1,20 +1,29 @@
+"HTTP Bearer Authentication utilities."
+
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 from pyhttp_util.headers.headers import Header, HeaderType
 
+__all__ = ("BearerAuth",)
+
 
 @dataclass(frozen=True, slots=True)
 class BearerAuth:
+    """HTTP Bearer Authentication token."""
+
     token: str
 
     def __post_init__(self) -> None:
+        """Validates that token is not empty and has no whitespace."""
         if not self.token:
             raise ValueError("Token cannot be empty")
         if any(char.isspace() for char in self.token):
             raise ValueError("Token cannot contain whitespace")
 
     @classmethod
-    def decode(cls, header: HeaderType) -> "BearerAuth":
+    def decode(cls, header: HeaderType) -> BearerAuth:
         """Create a BearerAuth object from an Authorization HTTP header.
 
         Args:
@@ -39,7 +48,7 @@ class BearerAuth:
         except ValueError:
             raise ValueError(
                 f"Invalid authorization header format: '{auth_str}'"
-            )
+            ) from None
 
         if auth_type.lower() != "bearer":
             raise ValueError(
@@ -61,4 +70,5 @@ class BearerAuth:
         return f"Bearer {self.token}"
 
     def __str__(self) -> str:
+        """Returns the encoded Authorization header value."""
         return self.encode()

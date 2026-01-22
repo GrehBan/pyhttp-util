@@ -1,6 +1,11 @@
 "RFC 7230 and related standards validator for HTTP headers."
 
+from __future__ import annotations
+
 import re
+from collections.abc import Sequence
+from dataclasses import dataclass
+from typing import Any
 
 __all__ = ("RFC7230Validator", "ValidationError", "ValidationResult")
 
@@ -11,28 +16,21 @@ class ValidationError(Exception):
     pass
 
 
+@dataclass(frozen=True, slots=True)
 class ValidationResult:
-    """Result of a validation operation."""
+    """Result of a validation operation.
 
-    def __init__(self, valid: bool, error: str | None = None):
-        """Initializes a new instance of ValidationResult.
+    Attributes:
+        valid: Whether the validation was successful.
+        error: The error message if validation failed.
+    """
 
-        Args:
-            valid: Whether the validation was successful.
-            error: The error message if validation failed.
-        """
-        self.valid = valid
-        self.error = error
+    valid: bool
+    error: str | None = None
 
     def __bool__(self) -> bool:
         """Returns True if valid, False otherwise."""
         return self.valid
-
-    def __repr__(self) -> str:
-        """Returns a string representation of the result."""
-        if self.valid:
-            return "ValidationResult(valid=True)"
-        return f"ValidationResult(valid=False, error={self.error!r})"
 
 
 class RFC7230Validator:
@@ -226,12 +224,15 @@ class RFC7230Validator:
 
     @classmethod
     def validate_no_duplicate_headers(
-        cls, headers: list[tuple[str, str]], raise_on_error: bool = False
+        cls,
+        headers: Sequence[tuple[Any, str]],
+        raise_on_error: bool = False,
     ) -> ValidationResult:
         """Validates that there are no disallowed duplicate headers.
 
         Args:
-            headers: List of (name, value) tuples.
+            headers: Sequence of (name, value) tuples. Names can be str or
+                any type with a lower() method (e.g., HTTPHeader, istr).
             raise_on_error: Whether to raise ValidationError on failure.
 
         Returns:

@@ -18,7 +18,7 @@ class SameSite(str, Enum):
     NONE = "None"
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Cookie:
     """Represents an HTTP Cookie.
 
@@ -27,7 +27,7 @@ class Cookie:
         value: The value of the cookie.
         domain: The domain the cookie applies to.
         path: The path the cookie applies to (default "/").
-        expires: The expiration datetime.
+        expires: The expiration datetime or seconds to expiration
         max_age: The max age in seconds.
         secure: Whether the cookie is secure-only.
         httponly: Whether the cookie is HTTP-only.
@@ -39,7 +39,7 @@ class Cookie:
     value: str
     domain: str | None = None
     path: str = "/"
-    expires: datetime | None = None
+    expires: datetime | int | None = None
     max_age: int | None = None
     secure: bool = False
     httponly: bool = False
@@ -52,6 +52,15 @@ class Cookie:
 
         if not self._is_valid_cookie_value(self.value):
             raise ValidationError(f"Invalid cookie value: {self.value!r}")
+
+        if self.samesite == SameSite.NONE and not self.secure:
+            raise ValidationError(
+                "SameSite=None requires the Secure attribute"
+            )
+        if isinstance(self.expires, int):
+            self.expires = datetime.now(timezone.utc) + timedelta(
+                seconds=self.expires
+            )
 
     @staticmethod
     def _is_valid_cookie_value(value: str) -> bool:
@@ -111,7 +120,7 @@ class Cookie:
             parts.append("HttpOnly")
 
         if self.samesite:
-            parts.append(f"SameSite={self.samesite}")
+            parts.append(f"SameSite={self.samesite.value}")
 
         if self.partitioned:
             parts.append("Partitioned")
@@ -137,7 +146,19 @@ class CookieJar:
         """
         if cookie.max_age is not None and cookie.expires is None:
             now = datetime.now(timezone.utc)
-            cookie.expires = now + timedelta(seconds=cookie.max_age)
+            expires = now + timedelta(seconds=cookie.max_age)
+            cookie = Cookie(
+                name=cookie.name,
+                value=cookie.value,
+                domain=cookie.domain,
+                path=cookie.path,
+                expires=expires,
+                max_age=cookie.max_age,
+                secure=cookie.secure,
+                httponly=cookie.httponly,
+                samesite=cookie.samesite,
+                partitioned=cookie.partitioned,
+            )
 
         self.discard(cookie.name, cookie.domain, cookie.path)
         self._cookies.append(cookie)

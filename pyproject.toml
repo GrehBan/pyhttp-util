@@ -7,7 +7,7 @@ name = "pyhttp-util"
 version = "0.1.0"
 description = "is a robust, strictly-typed Python library designed to simplify and standardize the manipulation of HTTP headers, authentication, and timeout configurations. It ensures compliance with RFC 7230 and provides a developer-friendly API for building and validating HTTP-related data structures."
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.10"
 dependencies = [
     "multidict>=6.7.0",
 ]
@@ -35,7 +35,7 @@ dev = [
 
 [tool.ruff]
 line-length = 79
-src = ["sqlatypemodel", "tests"]
+src = ["pyhttp_util", "tests"]
 target-version = "py310"
 exclude = [
     ".git",

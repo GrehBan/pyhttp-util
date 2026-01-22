@@ -143,9 +143,3 @@ HeadersDict = TypedDict(
     },
     total=False,
 )
-
-
-class HeadersDictProxy(HeadersDict):
-    """A proxy for HeadersDict to make it immutable."""
-
-    pass

@@ -1,5 +1,7 @@
 "Core header data structures."
 
+from __future__ import annotations
+
 from collections.abc import (
     ItemsView,
     Iterator,
@@ -9,10 +11,7 @@ from collections.abc import (
     ValuesView,
 )
 from dataclasses import dataclass, field
-from typing import (
-    TypeAlias,
-    Union,
-)
+from typing import TypeAlias
 
 from multidict import (
     CIMultiDict,
@@ -38,8 +37,6 @@ HeadersType: TypeAlias = (
     | HeadersDict
 )
 HeaderName: TypeAlias = HTTPHeader | istr | str
-HeaderType: TypeAlias = Union[str, "Header"]
-validator = RFC7230Validator()
 
 # Create a map for case-insensitive lookup of HTTPHeader members
 _HEADER_NAME_MAP = {h.value.lower(): h for h in HTTPHeader}
@@ -75,10 +72,10 @@ class Header:
 
     def __post_init__(self) -> None:
         """Validates the header upon initialization."""
-        validator.validate_header_field(
+        RFC7230Validator.validate_header_field(
             str(self.name), self.value, raise_on_error=True
         )
-        validator.validate_header_size(
+        RFC7230Validator.validate_header_size(
             str(self.name), self.value, raise_on_error=True
         )
 
@@ -106,7 +103,7 @@ class Header:
         """
         return {self.name: self.value}
 
-    def copy(self) -> "Header":
+    def copy(self) -> Header:
         """Creates a copy of the header.
 
         Returns:
@@ -115,7 +112,7 @@ class Header:
         return Header(self.name, self.value)
 
     @classmethod
-    def build(cls, name: HeaderName, value: str) -> "Header":
+    def build(cls, name: HeaderName, value: str) -> Header:
         """Builds a Header instance.
 
         Converts string names to HTTPHeader if possible.
@@ -128,6 +125,9 @@ class Header:
             A new Header instance.
         """
         return cls(_ensure_header_name(name), value)
+
+
+HeaderType: TypeAlias = str | Header
 
 
 @dataclass
@@ -153,8 +153,8 @@ class Headers:
             self.headers_map.add(header.name, header.value)
 
         if not self.allow_duplicates:
-            validator.validate_no_duplicate_headers(
-                [(str(h.name), h.value) for h in self.headers],
+            RFC7230Validator.validate_no_duplicate_headers(
+                self.to_tuples(),
                 raise_on_error=True,
             )
 
@@ -211,18 +211,21 @@ class Headers:
             name: The header name.
 
         Returns:
-            A list of header values.
+            A list of header values, empty if not found.
         """
-        return self.headers_map.getall(_ensure_header_name(name))
+        return self.headers_map.getall(_ensure_header_name(name), [])
 
     def remove(self, name: HeaderName) -> None:
-        """Removes all headers with the given name.
+        """Removes all headers with the given name (case-insensitive).
 
         Args:
             name: The header name.
         """
         name = _ensure_header_name(name)
-        self.headers = [h for h in self.headers if h.name != name]
+        name_lower = name.lower()
+        self.headers = [
+            h for h in self.headers if h.name.lower() != name_lower
+        ]
         if name in self.headers_map:
             del self.headers_map[name]
 
@@ -323,15 +326,15 @@ class Headers:
         """Returns official string representation."""
         return f"Headers({self.headers!r})"
 
-    def copy(self) -> "Headers":
+    def copy(self) -> Headers:
         """Creates a shallow copy.
 
         Returns:
-            A new Headers instance.
+            A new Headers instance with same allow_duplicates setting.
         """
-        return Headers(self.to_list())
+        return Headers(self.to_list(), allow_duplicates=self.allow_duplicates)
 
-    def extend(self, other: "Headers") -> None:
+    def extend(self, other: Headers) -> None:
         """Extends with headers from another collection.
 
         Args:
@@ -340,7 +343,7 @@ class Headers:
         for header in other:
             self.add(header)
 
-    def update(self, other: "Headers") -> None:
+    def update(self, other: Headers) -> None:
         """Replaces current headers with those from another collection.
 
         Args:
@@ -349,7 +352,7 @@ class Headers:
         self.clear()
         self.extend(other)
 
-    def merge(self, other: "Headers") -> None:
+    def merge(self, other: Headers) -> None:
         """Merges headers, keeping existing ones if present.
 
         Args:
@@ -412,7 +415,13 @@ class Headers:
         if not self.headers:
             raise KeyError("Headers is empty")
         header = self.headers.pop()
-        del self.headers_map[header.name]
+        # Rebuild map entry for this name from remaining headers
+        if header.name in self.headers_map:
+            del self.headers_map[header.name]
+        header_name_lower = header.name.lower()
+        for h in self.headers:
+            if h.name.lower() == header_name_lower:
+                self.headers_map.add(h.name, h.value)
         return (header.name, header.value)
 
     def setdefault(self, name: HeaderName, default: str = "") -> str:
@@ -470,7 +479,7 @@ class Headers:
 
     def clear_duplicates(self) -> None:
         """Removes duplicate headers, keeping the first occurrence."""
-        seen = set()
+        seen: set[HTTPHeader | istr] = set()
         unique_headers = []
         for header in self.headers:
             if header.name not in seen:
@@ -479,48 +488,58 @@ class Headers:
         self.headers = unique_headers
         self.headers_map.clear()
         for header in self.headers:
-            self.headers_map[header.name] = header.value
+            self.headers_map.add(header.name, header.value)
 
     @classmethod
-    def build_from_dict(cls, headers_dict: dict[str, str]) -> "Headers":
+    def build_from_dict(
+        cls, headers_dict: dict[str, str], *, allow_duplicates: bool = False
+    ) -> Headers:
         """Builds Headers from a dictionary.
 
         Args:
             headers_dict: Dictionary of {name: value}.
+            allow_duplicates: Whether to allow duplicate headers.
 
         Returns:
             A new Headers instance.
         """
-        headers = cls()
+        headers = cls(allow_duplicates=allow_duplicates)
         for name, value in headers_dict.items():
             headers.add_raw(name, value)
         return headers
 
     @classmethod
     def build_from_tuples(
-        cls, headers_tuples: list[tuple[str, str]]
-    ) -> "Headers":
+        cls,
+        headers_tuples: list[tuple[str, str]],
+        *,
+        allow_duplicates: bool = False,
+    ) -> Headers:
         """Builds Headers from a list of tuples.
 
         Args:
             headers_tuples: List of (name, value).
+            allow_duplicates: Whether to allow duplicate headers.
 
         Returns:
             A new Headers instance.
         """
-        headers = cls()
+        headers = cls(allow_duplicates=allow_duplicates)
         for name, value in headers_tuples:
             headers.add_raw(name, value)
         return headers
 
     @classmethod
-    def build_from_list(cls, headers_list: list[Header]) -> "Headers":
+    def build_from_list(
+        cls, headers_list: list[Header], *, allow_duplicates: bool = False
+    ) -> Headers:
         """Builds Headers from a list of Header objects.
 
         Args:
             headers_list: List of Header objects.
+            allow_duplicates: Whether to allow duplicate headers.
 
         Returns:
             A new Headers instance.
         """
-        return cls(headers_list.copy())
+        return cls(headers_list.copy(), allow_duplicates=allow_duplicates)

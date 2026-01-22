@@ -58,8 +58,10 @@ class Cookie:
                 "SameSite=None requires the Secure attribute"
             )
         if isinstance(self.expires, int):
-            self.expires = datetime.now(timezone.utc) + timedelta(
-                seconds=self.expires
+            object.__setattr__(
+                self,
+                "expires",
+                datetime.now(timezone.utc) + timedelta(seconds=self.expires),
             )
 
     @staticmethod
@@ -104,11 +106,14 @@ class Cookie:
 
         if self.expires:
             dt = self.expires
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=timezone.utc)
-            else:
-                dt = dt.astimezone(timezone.utc)
-            parts.append(f"Expires={dt.strftime('%a, %d %b %Y %H:%M:%S GMT')}")
+            if isinstance(dt, datetime):
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                else:
+                    dt = dt.astimezone(timezone.utc)
+                parts.append(
+                    f"Expires={dt.strftime('%a, %d %b %Y %H:%M:%S GMT')}"
+                )
 
         if self.max_age is not None:
             parts.append(f"Max-Age={self.max_age}")
@@ -205,11 +210,12 @@ class CookieJar:
         for cookie in self._cookies:
             if cookie.expires:
                 dt = cookie.expires
-                if dt.tzinfo is None:
-                    dt = dt.replace(tzinfo=timezone.utc)
-                if dt < now:
-                    to_remove.append(cookie)
-                    continue
+                if isinstance(dt, datetime):
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    if dt < now:
+                        to_remove.append(cookie)
+                        continue
 
             if cookie.domain:
                 if not self._domain_match(domain, cookie.domain):

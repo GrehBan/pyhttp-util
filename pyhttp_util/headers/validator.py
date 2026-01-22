@@ -47,9 +47,9 @@ class RFC7230Validator:
     SP = 0x20
     HTAB = 0x09
 
-    ALLOWED_DUPLICATES = {"set-cookie"}
+    ALLOWED_DUPLICATES = frozenset({"set-cookie"})
 
-    COMMA_SEPARATED_HEADERS = {
+    COMMA_SEPARATED_HEADERS = frozenset({
         "accept",
         "accept-charset",
         "accept-encoding",
@@ -76,7 +76,7 @@ class RFC7230Validator:
         "access-control-allow-methods",
         "access-control-expose-headers",
         "access-control-request-headers",
-    }
+    })
 
     @classmethod
     def validate_field_name(

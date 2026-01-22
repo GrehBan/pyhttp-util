@@ -1,4 +1,4 @@
-"HTTP utilities for headers, authentication, and timeouts."
+"HTTP utilities for headers, authentication, timeouts, and status codes."
 
 from pyhttp_util.auth import BasicAuth, BearerAuth
 from pyhttp_util.headers import (
@@ -11,6 +11,14 @@ from pyhttp_util.headers import (
     HTTPHeader,
     SameSite,
     ValidationError,
+)
+from pyhttp_util.status import (
+    ClientError,
+    HTTPStatus,
+    HTTPStatusError,
+    ServerError,
+    StatusCodeValidator,
+    StatusValidationError,
 )
 from pyhttp_util.timeout import Timeout
 
@@ -31,4 +39,11 @@ __all__ = (
     "BearerAuth",
     # Timeout
     "Timeout",
+    # Status
+    "HTTPStatus",
+    "HTTPStatusError",
+    "ClientError",
+    "ServerError",
+    "StatusCodeValidator",
+    "StatusValidationError",
 )

@@ -15,9 +15,10 @@
 - [Usage](#usage)
   - [Headers](#1-working-with-headers)
   - [Validation](#2-validation)
-  - [Authentication](#3-authentication)
-  - [Cookies](#4-cookies)
-  - [Timeouts](#5-timeouts)
+- [Authentication](#3-authentication)
+   - [Cookies](#4-cookies)
+   - [Timeouts](#5-timeouts)
+   - [Status Codes](#6-status-codes)
 - [API Reference](#api-reference)
 - [Development](#development)
 - [License](#license)
@@ -59,6 +60,8 @@ from pyhttp_util import (
     CookieJar,
     SameSite,
     Timeout,
+    HTTPStatus,
+    StatusCodeValidator,
 )
 
 # Create headers
@@ -81,6 +84,13 @@ cookie = Cookie(
 
 # Configure timeouts
 timeout = Timeout(total=30.0, connect=5.0, sock_read=10.0)
+
+# Check status codes
+if StatusCodeValidator.is_success(200):
+    print("Request was successful")
+
+status = HTTPStatus.NOT_FOUND
+print(f"{status.value} {status.phrase}")  # 404 Not Found
 ```
 
 ## Usage
@@ -448,6 +458,91 @@ new_timeout = Timeout(
 )
 ```
 
+### 6. Status Codes
+
+Work with HTTP status codes using typed enums and validation.
+
+```python
+from pyhttp_util.status import HTTPStatus, StatusCodeValidator, HTTPStatusError
+
+# === Using HTTPStatus Enum ===
+
+# Access standard status codes
+status = HTTPStatus.OK
+print(f"{status.value} {status.phrase}")  # 200 OK
+print(f"Category: {status.category}")     # SUCCESSFUL
+
+# Check status categories
+if HTTPStatus.NOT_FOUND.is_client_error():
+    print("4xx client error")
+
+if HTTPStatus.INTERNAL_SERVER_ERROR.is_server_error():
+    print("5xx server error")
+
+if HTTPStatus.CREATED.is_success():
+    print("2xx successful response")
+
+# === Status Code Validation ===
+
+# Validate status codes
+print(StatusCodeValidator.is_valid(200))     # True
+print(StatusCodeValidator.is_valid(999))     # False
+
+# Check specific categories
+print(StatusCodeValidator.is_informational(100))  # True (1xx)
+print(StatusCodeValidator.is_success(200))        # True (2xx)
+print(StatusCodeValidator.is_redirect(301))       # True (3xx)
+print(StatusCodeValidator.is_client_error(404))   # True (4xx)
+print(StatusCodeValidator.is_server_error(500))  # True (5xx)
+
+# Raise for status (like requests)
+try:
+    StatusCodeValidator.raise_for_status(404)
+except HTTPStatusError as e:
+    print(f"HTTP {e.status.value} {e.status.phrase}: {e}")
+
+# === Working with Exceptions ===
+
+# Create specific exceptions
+error = HTTPStatusError(status=HTTPStatus.TOO_MANY_REQUESTS, message="Rate limit exceeded")
+print(error)  # HTTP 429 Too Many Requests: Rate limit exceeded
+
+# Use built-in exception classes
+from pyhttp_util.status.exceptions import (
+    ClientError,
+    ServerError,
+    NotFoundError,
+    UnauthorizedError,
+    ForbiddenError,
+    TooManyRequestsError,
+    InternalServerError,
+)
+
+# Raise specific errors
+if response.status == 404:
+    raise NotFoundError("Resource not found")
+
+if response.status == 401:
+    raise UnauthorizedError("Authentication required")
+
+if response.status == 429:
+    raise TooManyRequestsError("Rate limit exceeded")
+
+# === Status Code Utilities ===
+
+# Get status by code
+status = HTTPStatus.from_code(201)
+print(status)  # 201 Created
+
+# Get all codes in a category
+success_codes = HTTPStatus.get_all_in_category("SUCCESSFUL")
+print([code.value for code in success_codes])  # [200, 201, 202, 203, 204, 205, 206]
+
+# Check if code is standard
+print(HTTPStatus.is_standard(200))  # True
+print(HTTPStatus.is_standard(1024))  # False
+```
+
 ## API Reference
 
 ### Headers Module
@@ -480,6 +575,17 @@ new_timeout = Timeout(
 | Class | Description |
 |-------|-------------|
 | `Timeout` | Immutable timeout configuration |
+
+### Status Module
+
+| Class | Description |
+|-------|-------------|
+| `HTTPStatus` | Enum of all standard HTTP status codes |
+| `HTTPStatusError` | Base exception for HTTP status errors |
+| `ClientError` | Base class for 4xx status errors |
+| `ServerError` | Base class for 5xx status errors |
+| `StatusCodeValidator` | Static methods for status code validation |
+| `InformationalResponse` | 1xx informational response |
 
 ### Validator Module
 

@@ -1,4 +1,8 @@
-"RFC 7230 and related standards validator for HTTP headers."
+"""RFC 7230 validator for HTTP header fields.
+
+RFC 7230: HTTP/1.1 Message Syntax and Routing
+https://datatracker.ietf.org/doc/html/rfc7230
+"""
 
 from __future__ import annotations
 
@@ -34,8 +38,11 @@ class ValidationResult:
 
 
 class RFC7230Validator:
-    """Validator for HTTP headers
-    according to RFC 7230 and related standards."""
+    """Validator for HTTP header fields per RFC 7230 Section 3.2.
+
+    Validates header field names (token) and values (field-value).
+    See https://datatracker.ietf.org/doc/html/rfc7230#section-3.2
+    """
 
     TCHAR_PATTERN = re.compile(r'^[!#$%&\'"*+\-.0-9A-Z^_`a-z|~]+\Z')
 

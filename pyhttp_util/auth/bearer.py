@@ -1,4 +1,8 @@
-"HTTP Bearer Authentication utilities."
+"""HTTP Bearer Token Authentication utilities.
+
+RFC 6750: The OAuth 2.0 Authorization Framework: Bearer Token Usage
+https://datatracker.ietf.org/doc/html/rfc6750
+"""
 
 from __future__ import annotations
 
@@ -11,7 +15,7 @@ __all__ = ("BearerAuth",)
 
 @dataclass(frozen=True, slots=True)
 class BearerAuth:
-    """HTTP Bearer Authentication token."""
+    """HTTP Bearer Authentication token (RFC 6750)."""
 
     token: str
 

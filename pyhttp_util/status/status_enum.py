@@ -1,4 +1,8 @@
-"""HTTP status codes enumeration with phrases and descriptions."""
+"""HTTP status codes enumeration with phrases and descriptions.
+
+RFC 9110: HTTP Semantics
+https://datatracker.ietf.org/doc/html/rfc9110
+"""
 
 from __future__ import annotations
 
@@ -8,7 +12,7 @@ __all__ = ("HTTPStatus",)
 
 
 class HTTPStatus(int, Enum):
-    """Enumeration of HTTP status codes.
+    """Enumeration of HTTP status codes (RFC 9110 Section 15).
 
     Each member has an integer value (the status code) and provides
     properties for the phrase and description. Inherits from int,

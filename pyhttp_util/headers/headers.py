@@ -1,4 +1,8 @@
-"Core header data structures."
+"""Core HTTP header data structures.
+
+RFC 7230: HTTP/1.1 Message Syntax and Routing
+https://datatracker.ietf.org/doc/html/rfc7230
+"""
 
 from __future__ import annotations
 
@@ -60,7 +64,7 @@ def _ensure_header_name(name: HeaderName) -> HTTPHeader | istr:
 
 @dataclass(frozen=True, slots=True)
 class Header:
-    """Represents a single HTTP header.
+    """Represents a single HTTP header (RFC 7230 Section 3.2).
 
     Attributes:
         name: The header name (HTTPHeader enum or istr).
@@ -132,7 +136,7 @@ HeaderType: TypeAlias = str | Header
 
 @dataclass
 class Headers:
-    """A collection of HTTP headers.
+    """A collection of HTTP headers (RFC 7230 Section 3.2).
 
     Maintains insertion order and allows case-insensitive lookups.
     Enforces RFC 7230 validation rules.

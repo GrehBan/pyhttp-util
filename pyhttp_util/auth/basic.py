@@ -1,4 +1,8 @@
-"HTTP Basic Authentication utilities."
+"""HTTP Basic Authentication utilities.
+
+RFC 7617: The 'Basic' HTTP Authentication Scheme
+https://datatracker.ietf.org/doc/html/rfc7617
+"""
 
 from __future__ import annotations
 
@@ -15,7 +19,7 @@ DEFAULT_ENCODING = "latin1"
 
 @dataclass(frozen=True, slots=True)
 class BasicAuth:
-    """HTTP Basic Authentication credentials."""
+    """HTTP Basic Authentication credentials (RFC 7617)."""
 
     login: str
     password: str

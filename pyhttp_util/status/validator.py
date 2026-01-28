@@ -1,4 +1,8 @@
-"""HTTP status code validation utilities."""
+"""HTTP status code validation utilities.
+
+RFC 9110: HTTP Semantics
+https://datatracker.ietf.org/doc/html/rfc9110
+"""
 
 from __future__ import annotations
 
@@ -48,7 +52,7 @@ StatusCategory = Literal[
 
 
 class StatusCodeValidator:
-    """Validator for HTTP status codes.
+    """Validator for HTTP status codes (RFC 9110 Section 15).
 
     Provides methods to validate status codes, check their categories,
     and raise appropriate exceptions for error status codes.

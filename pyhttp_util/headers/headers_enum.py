@@ -1,4 +1,8 @@
-"""Enumeration of standard HTTP headers."""
+"""Enumeration of standard HTTP headers.
+
+RFC 9110: HTTP Semantics
+https://datatracker.ietf.org/doc/html/rfc9110
+"""
 
 from enum import Enum
 
@@ -8,7 +12,7 @@ __all__ = ("HTTPHeader",)
 
 
 class HTTPHeader(str, Enum):
-    """Comprehensive HTTP headers enumeration.
+    """Comprehensive HTTP headers enumeration (RFC 9110, RFC 6265, etc.).
 
     This enumeration contains standard HTTP headers defined in RFCs.
     The values are wrapped in `multidict.istr` for case-insensitive comparison.

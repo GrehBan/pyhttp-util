@@ -1,4 +1,7 @@
-"Timeout configuration for HTTP operations."
+"""Timeout configuration for HTTP operations.
+
+No specific RFC - timeouts are implementation-defined.
+"""
 
 from __future__ import annotations
 

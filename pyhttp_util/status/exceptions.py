@@ -1,4 +1,8 @@
-"""HTTP status code exception hierarchy."""
+"""HTTP status code exception hierarchy.
+
+RFC 9110: HTTP Semantics
+https://datatracker.ietf.org/doc/html/rfc9110
+"""
 
 from __future__ import annotations
 
@@ -85,25 +89,25 @@ class HTTPStatusError(Exception):
 
 
 class InformationalResponse(HTTPStatusError):
-    """Base exception for 1xx informational responses."""
+    """Base exception for 1xx informational responses (RFC 9110)."""
 
     default_message = "Informational response"
 
 
 class RedirectResponse(HTTPStatusError):
-    """Base exception for 3xx redirect responses."""
+    """Base exception for 3xx redirect responses (RFC 9110)."""
 
     default_message = "Redirect response"
 
 
 class ClientError(HTTPStatusError):
-    """Base exception for 4xx client errors."""
+    """Base exception for 4xx client errors (RFC 9110)."""
 
     default_message = "Client error"
 
 
 class ServerError(HTTPStatusError):
-    """Base exception for 5xx server errors."""
+    """Base exception for 5xx server errors (RFC 9110)."""
 
     default_message = "Server error"
 
@@ -112,203 +116,203 @@ class ServerError(HTTPStatusError):
 
 
 class BadRequestError(ClientError):
-    """400 Bad Request."""
+    """400 Bad Request (RFC 9110)."""
 
     status_code = 400
     default_message = "Bad Request"
 
 
 class UnauthorizedError(ClientError):
-    """401 Unauthorized."""
+    """401 Unauthorized (RFC 9110)."""
 
     status_code = 401
     default_message = "Unauthorized"
 
 
 class PaymentRequiredError(ClientError):
-    """402 Payment Required."""
+    """402 Payment Required (RFC 9110)."""
 
     status_code = 402
     default_message = "Payment Required"
 
 
 class ForbiddenError(ClientError):
-    """403 Forbidden."""
+    """403 Forbidden (RFC 9110)."""
 
     status_code = 403
     default_message = "Forbidden"
 
 
 class NotFoundError(ClientError):
-    """404 Not Found."""
+    """404 Not Found (RFC 9110)."""
 
     status_code = 404
     default_message = "Not Found"
 
 
 class MethodNotAllowedError(ClientError):
-    """405 Method Not Allowed."""
+    """405 Method Not Allowed (RFC 9110)."""
 
     status_code = 405
     default_message = "Method Not Allowed"
 
 
 class NotAcceptableError(ClientError):
-    """406 Not Acceptable."""
+    """406 Not Acceptable (RFC 9110)."""
 
     status_code = 406
     default_message = "Not Acceptable"
 
 
 class ProxyAuthenticationRequiredError(ClientError):
-    """407 Proxy Authentication Required."""
+    """407 Proxy Authentication Required (RFC 9110)."""
 
     status_code = 407
     default_message = "Proxy Authentication Required"
 
 
 class RequestTimeoutError(ClientError):
-    """408 Request Timeout."""
+    """408 Request Timeout (RFC 9110)."""
 
     status_code = 408
     default_message = "Request Timeout"
 
 
 class ConflictError(ClientError):
-    """409 Conflict."""
+    """409 Conflict (RFC 9110)."""
 
     status_code = 409
     default_message = "Conflict"
 
 
 class GoneError(ClientError):
-    """410 Gone."""
+    """410 Gone (RFC 9110)."""
 
     status_code = 410
     default_message = "Gone"
 
 
 class LengthRequiredError(ClientError):
-    """411 Length Required."""
+    """411 Length Required (RFC 9110)."""
 
     status_code = 411
     default_message = "Length Required"
 
 
 class PreconditionFailedError(ClientError):
-    """412 Precondition Failed."""
+    """412 Precondition Failed (RFC 9110)."""
 
     status_code = 412
     default_message = "Precondition Failed"
 
 
 class ContentTooLargeError(ClientError):
-    """413 Content Too Large."""
+    """413 Content Too Large (RFC 9110)."""
 
     status_code = 413
     default_message = "Content Too Large"
 
 
 class URITooLongError(ClientError):
-    """414 URI Too Long."""
+    """414 URI Too Long (RFC 9110)."""
 
     status_code = 414
     default_message = "URI Too Long"
 
 
 class UnsupportedMediaTypeError(ClientError):
-    """415 Unsupported Media Type."""
+    """415 Unsupported Media Type (RFC 9110)."""
 
     status_code = 415
     default_message = "Unsupported Media Type"
 
 
 class RangeNotSatisfiableError(ClientError):
-    """416 Range Not Satisfiable."""
+    """416 Range Not Satisfiable (RFC 9110)."""
 
     status_code = 416
     default_message = "Range Not Satisfiable"
 
 
 class ExpectationFailedError(ClientError):
-    """417 Expectation Failed."""
+    """417 Expectation Failed (RFC 9110)."""
 
     status_code = 417
     default_message = "Expectation Failed"
 
 
 class ImATeapotError(ClientError):
-    """418 I'm a Teapot."""
+    """418 I'm a Teapot (RFC 2324)."""
 
     status_code = 418
     default_message = "I'm a Teapot"
 
 
 class MisdirectedRequestError(ClientError):
-    """421 Misdirected Request."""
+    """421 Misdirected Request (RFC 9110)."""
 
     status_code = 421
     default_message = "Misdirected Request"
 
 
 class UnprocessableEntityError(ClientError):
-    """422 Unprocessable Entity."""
+    """422 Unprocessable Entity (RFC 9110)."""
 
     status_code = 422
     default_message = "Unprocessable Entity"
 
 
 class LockedError(ClientError):
-    """423 Locked."""
+    """423 Locked (RFC 4918)."""
 
     status_code = 423
     default_message = "Locked"
 
 
 class FailedDependencyError(ClientError):
-    """424 Failed Dependency."""
+    """424 Failed Dependency (RFC 4918)."""
 
     status_code = 424
     default_message = "Failed Dependency"
 
 
 class TooEarlyError(ClientError):
-    """425 Too Early."""
+    """425 Too Early (RFC 8470)."""
 
     status_code = 425
     default_message = "Too Early"
 
 
 class UpgradeRequiredError(ClientError):
-    """426 Upgrade Required."""
+    """426 Upgrade Required (RFC 9110)."""
 
     status_code = 426
     default_message = "Upgrade Required"
 
 
 class PreconditionRequiredError(ClientError):
-    """428 Precondition Required."""
+    """428 Precondition Required (RFC 6585)."""
 
     status_code = 428
     default_message = "Precondition Required"
 
 
 class TooManyRequestsError(ClientError):
-    """429 Too Many Requests."""
+    """429 Too Many Requests (RFC 6585)."""
 
     status_code = 429
     default_message = "Too Many Requests"
 
 
 class RequestHeaderFieldsTooLargeError(ClientError):
-    """431 Request Header Fields Too Large."""
+    """431 Request Header Fields Too Large (RFC 6585)."""
 
     status_code = 431
     default_message = "Request Header Fields Too Large"
 
 
 class UnavailableForLegalReasonsError(ClientError):
-    """451 Unavailable For Legal Reasons."""
+    """451 Unavailable For Legal Reasons (RFC 7725)."""
 
     status_code = 451
     default_message = "Unavailable For Legal Reasons"
@@ -318,14 +322,14 @@ class UnavailableForLegalReasonsError(ClientError):
 
 
 class InternalServerError(ServerError):
-    """500 Internal Server Error."""
+    """500 Internal Server Error (RFC 9110)."""
 
     status_code = 500
     default_message = "Internal Server Error"
 
 
 class NotImplementedError_(ServerError):
-    """501 Not Implemented.
+    """501 Not Implemented (RFC 9110).
 
     Note: Named with trailing underscore to avoid conflict with
     the built-in NotImplementedError.
@@ -336,63 +340,63 @@ class NotImplementedError_(ServerError):
 
 
 class BadGatewayError(ServerError):
-    """502 Bad Gateway."""
+    """502 Bad Gateway (RFC 9110)."""
 
     status_code = 502
     default_message = "Bad Gateway"
 
 
 class ServiceUnavailableError(ServerError):
-    """503 Service Unavailable."""
+    """503 Service Unavailable (RFC 9110)."""
 
     status_code = 503
     default_message = "Service Unavailable"
 
 
 class GatewayTimeoutError(ServerError):
-    """504 Gateway Timeout."""
+    """504 Gateway Timeout (RFC 9110)."""
 
     status_code = 504
     default_message = "Gateway Timeout"
 
 
 class HTTPVersionNotSupportedError(ServerError):
-    """505 HTTP Version Not Supported."""
+    """505 HTTP Version Not Supported (RFC 9110)."""
 
     status_code = 505
     default_message = "HTTP Version Not Supported"
 
 
 class VariantAlsoNegotiatesError(ServerError):
-    """506 Variant Also Negotiates."""
+    """506 Variant Also Negotiates (RFC 2295)."""
 
     status_code = 506
     default_message = "Variant Also Negotiates"
 
 
 class InsufficientStorageError(ServerError):
-    """507 Insufficient Storage."""
+    """507 Insufficient Storage (RFC 4918)."""
 
     status_code = 507
     default_message = "Insufficient Storage"
 
 
 class LoopDetectedError(ServerError):
-    """508 Loop Detected."""
+    """508 Loop Detected (RFC 5842)."""
 
     status_code = 508
     default_message = "Loop Detected"
 
 
 class NotExtendedError(ServerError):
-    """510 Not Extended."""
+    """510 Not Extended (RFC 2774)."""
 
     status_code = 510
     default_message = "Not Extended"
 
 
 class NetworkAuthenticationRequiredError(ServerError):
-    """511 Network Authentication Required."""
+    """511 Network Authentication Required (RFC 6585)."""
 
     status_code = 511
     default_message = "Network Authentication Required"

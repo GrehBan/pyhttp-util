@@ -19,6 +19,7 @@
    - [Cookies](#4-cookies)
    - [Timeouts](#5-timeouts)
    - [Status Codes](#6-status-codes)
+   - [Methods](#7-methods)
 - [API Reference](#api-reference)
 - [Development](#development)
 - [License](#license)
@@ -543,6 +544,28 @@ print(HTTPStatus.is_standard(200))  # True
 print(HTTPStatus.is_standard(1024))  # False
 ```
 
+### 7. Methods
+
+Work with HTTP methods using typed enums and descriptions.
+
+```python
+from pyhttp_util.method import HTTPMethod
+
+# === Using HTTPMethod Enum ===
+
+# Access standard methods
+method = HTTPMethod.GET
+print(method)              # GET
+print(method.description)  # Retrieve the target.
+
+# Compare with strings (inherited from str)
+if method == "GET":
+    print("It's a GET request")
+
+# Use in requests (example)
+# request(method=HTTPMethod.POST, url=...)
+```
+
 ## API Reference
 
 ### Headers Module
@@ -594,6 +617,12 @@ print(HTTPStatus.is_standard(1024))  # False
 | `RFC7230Validator` | Static methods for RFC 7230 validation |
 | `ValidationError` | Exception raised on validation failure |
 | `ValidationResult` | Result object with `valid` and `error` attributes |
+
+### Method Module
+
+| Class | Description |
+|-------|-------------|
+| `HTTPMethod` | Enum of standard HTTP methods (GET, POST, etc.) |
 
 ## Development
 

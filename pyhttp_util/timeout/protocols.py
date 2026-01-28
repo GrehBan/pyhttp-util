@@ -1,4 +1,7 @@
-"Protocol definitions for timeout module."
+"""Protocol definitions for timeout module.
+
+No specific RFC - timeouts are implementation-defined.
+"""
 
 from typing import Protocol, TypeAlias, runtime_checkable
 

@@ -1,4 +1,8 @@
-"HTTP Cookie management."
+"""HTTP Cookie management.
+
+RFC 6265: HTTP State Management Mechanism
+https://datatracker.ietf.org/doc/html/rfc6265
+"""
 
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -11,7 +15,7 @@ __all__ = ("SameSite", "Cookie", "CookieJar")
 
 
 class SameSite(str, Enum):
-    """Enumeration for SameSite cookie attribute."""
+    """Enumeration for SameSite cookie attribute (RFC 6265bis)."""
 
     LAX = "Lax"
     STRICT = "Strict"
@@ -20,7 +24,7 @@ class SameSite(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class Cookie:
-    """Represents an HTTP Cookie.
+    """Represents an HTTP Cookie (RFC 6265 Section 4.1).
 
     Attributes:
         name: The name of the cookie.
@@ -134,7 +138,7 @@ class Cookie:
 
 
 class CookieJar:
-    """A container for managing and filtering cookies."""
+    """A container for managing and filtering cookies (RFC 6265 Section 5)."""
 
     def __init__(self) -> None:
         """Initializes an empty CookieJar."""
